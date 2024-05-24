@@ -1,0 +1,89 @@
+employeeprofile.dart
+1 import 'package:flutter/material.dart';
+2
+3 void main() {
+4 runApp(ProfileCardApp());
+5 }
+6
+7 class ProfileCardApp extends StatelessWidget {
+8 @override
+9 Widget build(BuildContext context) {
+10 return MaterialApp(
+11 title: 'Employee Profile',
+12 home: ProfileCard(),
+13 );
+14 }
+15 }
+16
+17 class ProfileCard extends StatelessWidget {
+18 @override
+19 Widget build(BuildContext context) {
+20 return Scaffold(
+21 appBar: AppBar(
+22 title: Text('Employee Profile'),
+23 ),
+24 body: Center(
+25 child: Column(
+26 mainAxisAlignment: MainAxisAlignment.center,
+27 children: [
+28 CircleAvatar(
+29 radius: 50,
+30 backgroundImage: AssetImage('
+assets/Parthivi_Thakore.JPG'),
+31 ),
+32 SizedBox(height: 20),
+33 Text(
+34 'Parthivi Thakore',
+35 style: TextStyle(
+36 fontSize: 24,
+37 fontWeight: FontWeight.bold,
+38 ),
+39 ),
+40 SizedBox(height: 10),
+41 Text(
+42 'Software Engineer',
+43	style: TextStyle(
+44	fontSize: 18,
+45	color: Colors.grey,
+46	),
+47	),
+48	SizedBox(height: 20),
+49	Card(
+50	margin: EdgeInsets.symmetric(horizontal: 20),
+51	child: Padding(
+52	padding: EdgeInsets.all(20),
+53	child: Row(
+54	mainAxisAlignment: MainAxisAlignment.spaceBetween,
+55	children: [
+56	Column(
+57	crossAxisAlignment: CrossAxisAlignment.start,
+58	children: [
+59	Text(
+60	'Email:',
+61	style: TextStyle(
+62	fontSize: 16,
+63	fontWeight: FontWeight.bold,
+64	),
+65	),
+66	SizedBox(height: 5),
+67	Text(
+68	'2021pcecyparthivi044@poornima.org',
+69	style: TextStyle(fontSize: 14),
+70	),
+71	],
+72	),
+73	Column(
+74	crossAxisAlignment: CrossAxisAlignment.start,
+75	children: [
+76	Text(
+77	'Phone:',
+78	style: TextStyle(
+79	fontSize: 16,
+80	fontWeight: FontWeight.bold,
+81	),
+82	),
+83	SizedBox(height: 5), 
+84                        Text(
+85	'+91 234 567 890',
+86	style: TextStyle(fontSize: 14), 
+87                        ),
