@@ -1,0 +1,55 @@
+imagegallery.dart
+1 import 'package:flutter/material.dart';
+2
+3 void main() {
+4 runApp(ImageGalleryApp());
+5 }
+6
+7 class ImageGalleryApp extends StatelessWidget {
+8 @override
+9 Widget build(BuildContext context) {
+10 return MaterialApp(
+11 title: 'Image Gallery',
+12 home: ImageGallery(),
+13 );
+14 }
+15 }
+16
+17 class ImageGallery extends StatelessWidget {
+18 final List<String> _imagePaths = [
+19 'assets/image1.jpg',
+20 'assets/image2.jpg',
+21 'assets/image3.jpg',
+22 'assets/image4.jpg',
+23 'assets/image5.jpg',
+24 'assets/image6.jpg',
+25 ];
+26
+27 @override
+28 Widget build(BuildContext context) {
+29 return Scaffold(
+30 appBar: AppBar(
+31 title: Text('Image Gallery'),
+32 ),
+33 body: GridView.builder(
+34 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+35 crossAxisCount: 2,
+36 crossAxisSpacing: 10,
+37 mainAxisSpacing: 10,
+38 ),
+39 itemCount: _imagePaths.length,
+40 itemBuilder: (context, index) {
+41 return GestureDetector(
+42 onTap: () {
+  },
+45	child: GridTile(
+46	child: Image.asset(
+47	_imagePaths[index],
+48	fit: BoxFit.cover,
+49	),
+50	),
+51	);
+52	},
+53	),
+54	);
+55	}
