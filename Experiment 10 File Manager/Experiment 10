@@ -1,0 +1,115 @@
+import 'package:flutter/material.dart';
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
+import 'package:thumbnails/thumbnails.dart';
+
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Image & Video Handling',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: ImageVideoScreen(),
+    );
+  }
+}
+
+class ImageVideoScreen extends StatefulWidget {
+  @override
+  _ImageVideoScreenState createState() => _ImageVideoScreenState();
+}
+
+class _ImageVideoScreenState extends State<ImageVideoScreen> {
+  List<File> _images = [];
+  List<File> _videos = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadImagesAndVideos();
+  }
+
+  Future<void> _loadImagesAndVideos() async {
+    Directory directory = await getApplicationDocumentsDirectory();
+    List<FileSystemEntity> files = directory.listSync();
+    for (var file in files) {
+      if (file.path.endsWith('.jpg') || file.path.endsWith('.png')) {
+        _images.add(File(file.path));
+      } else if (file.path.endsWith('.mp4') || file.path.endsWith('.avi')) {
+        _videos.add(File(file.path));
+      }
+    }
+    setState(() {});
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Image & Video Handling'),
+      ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildSectionHeader('Images'),
+          _buildMediaList(_images),
+          _buildSectionHeader('Videos'),
+          _buildMediaList(_videos),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSectionHeader(String title) {
+    return Padding(
+      padding: EdgeInsets.all(8.0),
+      child: Text(
+        title,
+        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+      ),
+    );
+  }
+
+  Widget _buildMediaList(List<File> mediaFiles) {
+    return SizedBox(
+      height: 150,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: mediaFiles.length,
+        itemBuilder: (context, index) {
+          return Padding(
+            padding: EdgeInsets.all(8.0),
+            child: SizedBox(
+              width: 150,
+              child: mediaFiles[index].path.endsWith('.mp4') ||
+                      mediaFiles[index].path.endsWith('.avi')
+                  ? _buildVideoThumbnail(mediaFiles[index])
+                  : Image.file(mediaFiles[index], fit: BoxFit.cover),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildVideoThumbnail(File videoFile) {
+    return FutureBuilder<String>(
+      future: Thumbnails.getThumbnail(
+          videoFile.path, quality: 30, timeMs: 0, imageType: ThumbFormat.PNG),
+      builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+        if (snapshot.connectionState == ConnectionState.done &&
+            snapshot.data != null) {
+          return Image.file(File(snapshot.data!), fit: BoxFit.cover);
+        } else {
+          return Container();
+        }
+      },
+    );
+  }
+}
