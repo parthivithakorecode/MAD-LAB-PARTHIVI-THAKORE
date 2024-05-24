@@ -1,0 +1,96 @@
+import 'package:flutter/material.dart';
+import 'database_helper.dart';
+
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'SQLite Demo',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: MyHomePage(),
+    );
+  }
+}
+
+class MyHomePage extends StatefulWidget {
+  @override
+  _MyHomePageState createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  final DatabaseHelper _databaseHelper = DatabaseHelper();
+  final TextEditingController _controller = TextEditingController();
+  List<Map<String, dynamic>> _items = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _refreshItems();
+  }
+
+  void _refreshItems() async {
+    final data = await _databaseHelper.getItems();
+    setState(() {
+      _items = data;
+    });
+  }
+
+  void _addItem() async {
+    if (_controller.text.isNotEmpty) {
+      await _databaseHelper.insertItem(_controller.text);
+      _controller.clear();
+      _refreshItems();
+    }
+  }
+
+  void _deleteItem(int id) async {
+    await _databaseHelper.deleteItem(id);
+    _refreshItems();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('SQLite Demo'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          children: [
+            TextField(
+              controller: _controller,
+              decoration: InputDecoration(
+                labelText: 'Item Name',
+                suffixIcon: IconButton(
+                  icon: Icon(Icons.add),
+                  onPressed: _addItem,
+                ),
+              ),
+            ),
+            Expanded(
+              child: ListView.builder(
+                itemCount: _items.length,
+                itemBuilder: (context, index) {
+                  return ListTile(
+                    title: Text(_items[index]['name']),
+                    trailing: IconButton(
+                      icon: Icon(Icons.delete),
+                      onPressed: () => _deleteItem(_items[index]['id']),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
