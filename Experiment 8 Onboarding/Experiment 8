@@ -1,0 +1,184 @@
+import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Onboarding App',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: FutureBuilder<bool>(
+        future: _checkIfFirstRun(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return CircularProgressIndicator();
+          } else {
+            return snapshot.data == true ? OnboardingScreen() : HomeScreen();
+          }
+        },
+      ),
+    );
+  }
+
+  Future<bool> _checkIfFirstRun() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool isFirstRun = prefs.getBool('isFirstRun') ?? true;
+    if (isFirstRun) {
+      prefs.setBool('isFirstRun', false);
+    }
+    return isFirstRun;
+  }
+}
+
+class OnboardingScreen extends StatefulWidget {
+  @override
+  _OnboardingScreenState createState() => _OnboardingScreenState();
+}
+
+class _OnboardingScreenState extends State<OnboardingScreen> {
+  final PageController _pageController = PageController();
+  int _currentIndex = 0;
+
+  List<Widget> _buildPages() {
+    return [
+      OnboardingPage(
+        title: 'Welcome to the App!',
+        description: 'This is the first page of the onboarding experience.',
+        imageAsset: 'assets/image1.png',
+      ),
+      OnboardingPage(
+        title: 'Track your progress',
+        description: 'This page explains how to track your progress.',
+        imageAsset: 'assets/image2.png',
+      ),
+      OnboardingPage(
+        title: 'Stay motivated',
+        description: 'This page explains how to stay motivated.',
+        imageAsset: 'assets/image3.png',
+      ),
+    ];
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: PageView(
+        controller: _pageController,
+        children: _buildPages(),
+        onPageChanged: (index) {
+          setState(() {
+            _currentIndex = index;
+          });
+        },
+      ),
+      bottomSheet: _currentIndex == 2
+          ? TextButton(
+              onPressed: () {
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (_) => HomeScreen()),
+                );
+              },
+              child: Text('Get Started'),
+            )
+          : Container(
+              padding: EdgeInsets.symmetric(horizontal: 16.0),
+              height: 60,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  TextButton(
+                    onPressed: () {
+                      _pageController.animateToPage(2,
+                          duration: Duration(milliseconds: 300),
+                          curve: Curves.easeInOut);
+                    },
+                    child: Text('Skip'),
+                  ),
+                  Row(
+                    children: List.generate(3, (index) {
+                      return Container(
+                        margin: EdgeInsets.all(4.0),
+                        width: 10,
+                        height: 10,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: _currentIndex == index
+                              ? Colors.blue
+                              : Colors.grey,
+                        ),
+                      );
+                    }),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      _pageController.nextPage(
+                          duration: Duration(milliseconds: 300),
+                          curve: Curves.easeInOut);
+                    },
+                    child: Text('Next'),
+                  ),
+                ],
+              ),
+            ),
+    );
+  }
+}
+
+class OnboardingPage extends StatelessWidget {
+  final String title;
+  final String description;
+  final String imageAsset;
+
+  OnboardingPage(
+      {required this.title, required this.description, required this.imageAsset});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Image.asset(imageAsset),
+          SizedBox(height: 16.0),
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 24.0,
+              fontWeight: FontWeight.bold,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(height: 16.0),
+          Text(
+            description,
+            style: TextStyle(
+              fontSize: 16.0,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class HomeScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Home Screen'),
+      ),
+      body: Center(
+        child: Text('This is the home screen'),
+      ),
+    );
+  }
+}
