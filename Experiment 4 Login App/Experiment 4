@@ -1,0 +1,89 @@
+loginapp.dart
+1 import 'package:flutter/material.dart';
+2
+3 void main() {
+4 runApp(LoginApp());
+5 }
+6
+7 class LoginApp extends StatelessWidget {
+8 @override
+9 Widget build(BuildContext context) {
+10 return MaterialApp(
+11 title: 'Login App',
+12 theme: ThemeData(
+13 primarySwatch: Colors.blue,
+14 ),
+15 home: LoginPage(),
+16 );
+17 }
+18 }
+19
+20 class LoginPage extends StatefulWidget {
+21 @override
+22 _LoginPageState createState() => _LoginPageState();
+23 }
+24
+25 class _LoginPageState extends State<LoginPage> {
+26 TextEditingController _usernameController = TextEditingController()
+;
+27 TextEditingController _passwordController = TextEditingController()
+;
+28 bool _isLoggedIn = false;
+29
+30 @override
+31 Widget build(BuildContext context) {
+32 return Scaffold(
+33 appBar: AppBar(
+34 title: Text('Login'),
+35 ),
+36 body: Padding(
+37 padding: EdgeInsets.all(20.0),
+38 child: Column(
+39 mainAxisAlignment: MainAxisAlignment.center,
+40 children: [
+41 TextField(
+42 controller: _usernameController,
+43 decoration: InputDecoration(
+44 labelText: 'Username',
+45 ),
+46 ),
+47 SizedBox(height: 20.0),
+48 TextField(
+49 controller: _passwordController,
+50 obscureText: true,
+51 decoration: InputDecoration(
+52 labelText: 'Password',
+53 ),
+54 ),
+55 SizedBox(height: 20.0),
+56 ElevatedButton(
+57 onPressed: () {
+58
+59 if (_usernameController.text == 'parthivi' &&
+60 _passwordController.text == 'parthivi') {
+61 setState(() {
+62 _isLoggedIn = true;
+63 });
+64 } else {
+65 ScaffoldMessenger.of(context)
+.showSnackBar(SnackBar(
+66 content: Text('Invalid username or password'),
+67 ));
+68 }
+69 },
+70 child: Text('Login'),
+71 ),
+72 SizedBox(height: 20.0),
+73 _isLoggedIn
+74 ? Text(
+75 'Logged in as: ${_usernameController.text}',
+76 style: TextStyle(fontSize: 16.0),
+77 )
+78 : Container(),
+79 ],
+80 ),
+81 ),
+82 );
+83 }
+84 }
+85
